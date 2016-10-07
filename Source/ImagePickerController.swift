@@ -17,52 +17,17 @@ public class ImagePickerController: UIViewController {
     static let velocity: CGFloat = 100
   }
 
-  public lazy var galleryView: ImageGalleryView = { [unowned self] in
-    let galleryView = ImageGalleryView()
-    galleryView.delegate = self
-    galleryView.selectedStack = self.stack
-    galleryView.collectionView.layer.anchorPoint = CGPoint(x: 0, y: 0)
-    galleryView.imageLimit = self.imageLimit
+  public lazy var galleryView: ImageGalleryView = self.createGalleryView()
 
-    return galleryView
-    }()
+  public lazy var bottomContainer: BottomContainerView = self.createBottomContainer()
+  
+  lazy var topView: TopView = self.createTopView()
+  
+  lazy var cameraController: CameraView = self.createCameraController()
 
-  public lazy var bottomContainer: BottomContainerView = { [unowned self] in
-    let view = BottomContainerView()
-    view.backgroundColor = UIColor(red: 0.09, green: 0.11, blue: 0.13, alpha: 1)
-    view.delegate = self
-
-    return view
-    }()
-
-  lazy var topView: TopView = { [unowned self] in
-    let view = TopView()
-    view.backgroundColor = .clearColor()
-    view.delegate = self
-
-    return view
-    }()
-
-  lazy var cameraController: CameraView = { [unowned self] in
-    let controller = CameraView()
-    controller.delegate = self
-
-    return controller
-    }()
-
-  lazy var panGestureRecognizer: UIPanGestureRecognizer = { [unowned self] in
-    let gesture = UIPanGestureRecognizer()
-    gesture.addTarget(self, action: #selector(panGestureRecognizerHandler(_:)))
-
-    return gesture
-    }()
-
-  lazy var volumeView: MPVolumeView = { [unowned self] in
-    let view = MPVolumeView()
-    view.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
-
-    return view
-    }()
+  lazy var panGestureRecognizer: UIPanGestureRecognizer = self.createPanGestureRecognizer()
+  
+  lazy var volumeView: MPVolumeView = self.createVolumeView()
 
   var volume = AVAudioSession.sharedInstance().outputVolume
 
@@ -83,6 +48,55 @@ public class ImagePickerController: UIViewController {
         bottomContainer.doneButton.setTitle(doneButtonTitle, forState: .Normal)
       }
     }
+  }
+  
+  // MARK: - lazy compile time fix
+  
+  private func createGalleryView() -> ImageGalleryView {
+    let galleryView = ImageGalleryView()
+    galleryView.delegate = self
+    galleryView.selectedStack = self.stack
+    galleryView.collectionView.layer.anchorPoint = CGPoint(x: 0, y: 0)
+    galleryView.imageLimit = self.imageLimit
+    
+    return galleryView
+  }
+  
+  private func createBottomContainer() -> BottomContainerView {
+    let view = BottomContainerView()
+    view.backgroundColor = UIColor(red: 0.09, green: 0.11, blue: 0.13, alpha: 1)
+    view.delegate = self
+    
+    return view
+  }
+  
+  private func createTopView() -> TopView {
+    let view = TopView()
+    view.backgroundColor = .clearColor()
+    view.delegate = self
+    
+    return view
+  }
+  
+  private func createCameraController() -> CameraView {
+    let controller = CameraView()
+    controller.delegate = self
+    
+    return controller
+  }
+  
+  private func createPanGestureRecognizer() -> UIPanGestureRecognizer {
+    let gesture = UIPanGestureRecognizer()
+    gesture.addTarget(self, action: #selector(panGestureRecognizerHandler(_:)))
+    
+    return gesture
+  }
+  
+  private func createVolumeView() -> MPVolumeView {
+    let view = MPVolumeView()
+    view.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
+    
+    return view
   }
 
   // MARK: - View lifecycle

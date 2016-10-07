@@ -14,57 +14,69 @@ public class BottomContainerView: UIView {
     static let height: CGFloat = 101
   }
 
-  lazy var pickerButton: ButtonPicker = { [unowned self] in
+  lazy var pickerButton: ButtonPicker = self.createPickerButton()
+  
+  lazy var borderPickerButton: UIView = self.createBorderPickerButton()
+
+  public lazy var doneButton: UIButton = self.createDoneButton()
+  
+  lazy var stackView = ImageStackView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+
+  lazy var topSeparator: UIView = self.createTopSeparator()
+  
+  lazy var tapGestureRecognizer: UITapGestureRecognizer = self.createTapGestureRecognizer()
+  
+  weak var delegate: BottomContainerViewDelegate?
+  var pastCount = 0
+  
+  // MARK: Lazy compile time fix
+  
+  private func createPickerButton() -> ButtonPicker {
     let pickerButton = ButtonPicker()
     pickerButton.setTitleColor(.whiteColor(), forState: .Normal)
     pickerButton.delegate = self
-
+    
     return pickerButton
-    }()
-
-  lazy var borderPickerButton: UIView = {
+  }
+  
+  private func createBorderPickerButton() -> UIView {
     let view = UIView()
     view.backgroundColor = .clearColor()
     view.layer.borderColor = UIColor.whiteColor().CGColor
     view.layer.borderWidth = ButtonPicker.Dimensions.borderWidth
     view.layer.cornerRadius = ButtonPicker.Dimensions.buttonBorderSize / 2
-
+    
     return view
-    }()
-
-  public lazy var doneButton: UIButton = { [unowned self] in
+  }
+  
+  private func createDoneButton() -> UIButton {
     let button = UIButton()
     button.setTitle(Configuration.cancelButtonTitle, forState: .Normal)
     button.titleLabel?.font = Configuration.doneButton
     button.addTarget(self, action: #selector(doneButtonDidPress(_:)), forControlEvents: .TouchUpInside)
-
+    
     return button
-    }()
-
-  lazy var stackView = ImageStackView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
-
-  lazy var topSeparator: UIView = { [unowned self] in
+  }
+  
+  private func createTopSeparator() -> UIView {
     let view = UIView()
     view.backgroundColor = Configuration.backgroundColor
-
+    
     return view
-    }()
-
-  lazy var tapGestureRecognizer: UITapGestureRecognizer = { [unowned self] in
+  }
+  
+  private func createTapGestureRecognizer() -> UITapGestureRecognizer {
     let gesture = UITapGestureRecognizer()
     gesture.addTarget(self, action: #selector(handleTapGestureRecognizer(_:)))
-
+    
     return gesture
-    }()
-
-  weak var delegate: BottomContainerViewDelegate?
-  var pastCount = 0
-
+  }
+  
   // MARK: Initializers
-
+  
   public override init(frame: CGRect) {
     super.init(frame: frame)
-
+    
     [borderPickerButton, pickerButton, doneButton, stackView, topSeparator].forEach {
       addSubview($0)
       $0.translatesAutoresizingMaskIntoConstraints = false

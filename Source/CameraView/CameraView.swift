@@ -10,75 +10,21 @@ protocol CameraViewDelegate: class {
 }
 
 class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate {
+  
+  lazy var blurView: UIVisualEffectView = self.createBlurView()
 
-  lazy var blurView: UIVisualEffectView = { [unowned self] in
-    let effect = UIBlurEffect(style: .Dark)
-    let blurView = UIVisualEffectView(effect: effect)
+  lazy var focusImageView: UIImageView = self.createFocusImageView()
+  
+  lazy var capturedImageView: UIView = self.createCapturedImageView()
+  
+  lazy var containerView: UIView = self.createContainerView()
 
-    return blurView
-    }()
+  lazy var noCameraLabel: UILabel = self.createNoCameraLabel()
 
-  lazy var focusImageView: UIImageView = { [unowned self] in
-    let imageView = UIImageView()
-    imageView.image = AssetManager.getImage("focusIcon")
-    imageView.backgroundColor = .clearColor()
-    imageView.frame = CGRect(x: 0, y: 0, width: 110, height: 110)
-    imageView.alpha = 0
+  lazy var noCameraButton: UIButton = self.createNoCameraButton()
 
-    return imageView
-    }()
-
-  lazy var capturedImageView: UIView = { [unowned self] in
-    let view = UIView()
-    view.backgroundColor = .blackColor()
-    view.alpha = 0
-
-    return view
-    }()
-
-  lazy var containerView: UIView = {
-    let view = UIView()
-    view.alpha = 0
-
-    return view
-  }()
-
-  lazy var noCameraLabel: UILabel = { [unowned self] in
-    let label = UILabel()
-    label.font = Configuration.noCameraFont
-    label.textColor = Configuration.noCameraColor
-    label.text = Configuration.noCameraTitle
-    label.sizeToFit()
-
-    return label
-    }()
-
-  lazy var noCameraButton: UIButton = { [unowned self] in
-    let button = UIButton(type: .System)
-    let title = NSAttributedString(string: Configuration.settingsTitle,
-      attributes: [
-        NSFontAttributeName : Configuration.settingsFont,
-        NSForegroundColorAttributeName : Configuration.settingsColor,
-      ])
-
-    button.setAttributedTitle(title, forState: .Normal)
-    button.contentEdgeInsets = UIEdgeInsets(top: 5.0, left: 10.0, bottom: 5.0, right: 10.0)
-    button.sizeToFit()
-    button.layer.borderColor = Configuration.settingsColor.CGColor
-    button.layer.borderWidth = 1
-    button.layer.cornerRadius = 4
-    button.addTarget(self, action: #selector(settingsButtonDidTap), forControlEvents: .TouchUpInside)
-
-    return button
-    }()
-
-  lazy var tapGestureRecognizer: UITapGestureRecognizer = { [unowned self] in
-    let gesture = UITapGestureRecognizer()
-    gesture.addTarget(self, action: #selector(tapGestureRecognizerHandler(_:)))
-
-    return gesture
-    }()
-
+  lazy var tapGestureRecognizer: UITapGestureRecognizer = self.createTapGestureRecognizer()
+  
   let cameraMan = CameraMan()
 
   var previewLayer: AVCaptureVideoPreviewLayer?
@@ -132,6 +78,76 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
     view.clipsToBounds = true
 
     previewLayer = layer
+  }
+  
+  // MARK: - lazy compile time fix
+  
+  private func createBlurView() -> UIVisualEffectView {
+    let effect = UIBlurEffect(style: .Dark)
+    let blurView = UIVisualEffectView(effect: effect)
+    
+    return blurView
+  }
+  
+  private func createFocusImageView() -> UIImageView {
+    let imageView = UIImageView()
+    imageView.image = AssetManager.getImage("focusIcon")
+    imageView.backgroundColor = .clearColor()
+    imageView.frame = CGRect(x: 0, y: 0, width: 110, height: 110)
+    imageView.alpha = 0
+    
+    return imageView
+  }
+  
+  private func createCapturedImageView() -> UIView {
+    let view = UIView()
+    view.backgroundColor = .blackColor()
+    view.alpha = 0
+    
+    return view
+  }
+  
+  private func createContainerView() -> UIView {
+    let view = UIView()
+    view.alpha = 0
+    
+    return view
+  }
+  
+  private func createNoCameraLabel() -> UILabel {
+    let label = UILabel()
+    label.font = Configuration.noCameraFont
+    label.textColor = Configuration.noCameraColor
+    label.text = Configuration.noCameraTitle
+    label.sizeToFit()
+    
+    return label
+  }
+  
+  private func createNoCameraButton() -> UIButton {
+    let button = UIButton(type: .System)
+    let title = NSAttributedString(string: Configuration.settingsTitle,
+                                   attributes: [
+                                    NSFontAttributeName : Configuration.settingsFont,
+                                    NSForegroundColorAttributeName : Configuration.settingsColor,
+      ])
+    
+    button.setAttributedTitle(title, forState: .Normal)
+    button.contentEdgeInsets = UIEdgeInsets(top: 5.0, left: 10.0, bottom: 5.0, right: 10.0)
+    button.sizeToFit()
+    button.layer.borderColor = Configuration.settingsColor.CGColor
+    button.layer.borderWidth = 1
+    button.layer.cornerRadius = 4
+    button.addTarget(self, action: #selector(settingsButtonDidTap), forControlEvents: .TouchUpInside)
+    
+    return button
+  }
+  
+  private func createTapGestureRecognizer() -> UITapGestureRecognizer {
+    let gesture = UITapGestureRecognizer()
+    gesture.addTarget(self, action: #selector(tapGestureRecognizerHandler(_:)))
+    
+    return gesture
   }
 
   // MARK: - Layout

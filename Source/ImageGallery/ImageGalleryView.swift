@@ -15,55 +15,15 @@ public class ImageGalleryView: UIView {
     static let galleryBarHeight: CGFloat = 24
   }
 
-  lazy public var collectionView: UICollectionView = { [unowned self] in
-    let collectionView = UICollectionView(frame: CGRect.zero,
-      collectionViewLayout: self.collectionViewLayout)
-    collectionView.translatesAutoresizingMaskIntoConstraints = false
-    collectionView.backgroundColor = Configuration.mainColor
-    collectionView.showsHorizontalScrollIndicator = false
-    collectionView.dataSource = self
-    collectionView.delegate = self
-
-    return collectionView
-    }()
-
-  lazy var collectionViewLayout: UICollectionViewLayout = { [unowned self] in
-    let layout = ImageGalleryLayout()
-    layout.scrollDirection = .Horizontal
-    layout.minimumInteritemSpacing = Configuration.cellSpacing
-    layout.minimumLineSpacing = 2
-    layout.sectionInset = UIEdgeInsetsZero
-
-    return layout
-    }()
-
-  lazy var topSeparator: UIView = { [unowned self] in
-    let view = UIView()
-    view.translatesAutoresizingMaskIntoConstraints = false
-    view.addGestureRecognizer(self.panGestureRecognizer)
-    view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.6)
-
-    return view
-    }()
-
-  lazy var panGestureRecognizer: UIPanGestureRecognizer = { [unowned self] in
-    let gesture = UIPanGestureRecognizer()
-    gesture.addTarget(self, action: #selector(handlePanGestureRecognizer(_:)))
-
-    return gesture
-    }()
-
-  public lazy var noImagesLabel: UILabel = { [unowned self] in
-    let label = UILabel()
-    label.font = Configuration.noImagesFont
-    label.textColor = Configuration.noImagesColor
-    label.text = Configuration.noImagesTitle
-    label.alpha = 0
-    label.sizeToFit()
-    self.addSubview(label)
-
-    return label
-    }()
+  lazy public var collectionView: UICollectionView = self.createCollectionView()
+  
+  lazy var collectionViewLayout: UICollectionViewLayout = self.createCollectionViewLayout()
+  
+  lazy var topSeparator: UIView = self.createTopSeparator()
+  
+  lazy var panGestureRecognizer: UIPanGestureRecognizer = self.createPanGestureRecognizer()
+  
+  public lazy var noImagesLabel: UILabel = self.createNoImagesLabel()
 
   public lazy var selectedStack = ImageStack()
   lazy var assets = [PHAsset]()
@@ -76,6 +36,58 @@ public class ImageGalleryView: UIView {
   var canFetchImages = false
   var imageLimit = 0
 
+  // MARK: - Lazy compile time fix
+  
+  private func createCollectionView() -> UICollectionView {
+    let collectionView = UICollectionView(frame: CGRect.zero,
+                                          collectionViewLayout: self.collectionViewLayout)
+    collectionView.translatesAutoresizingMaskIntoConstraints = false
+    collectionView.backgroundColor = Configuration.mainColor
+    collectionView.showsHorizontalScrollIndicator = false
+    collectionView.dataSource = self
+    collectionView.delegate = self
+    
+    return collectionView
+  }
+  
+  private func createCollectionViewLayout() -> UICollectionViewLayout {
+    let layout = ImageGalleryLayout()
+    layout.scrollDirection = .Horizontal
+    layout.minimumInteritemSpacing = Configuration.cellSpacing
+    layout.minimumLineSpacing = 2
+    layout.sectionInset = UIEdgeInsetsZero
+    
+    return layout
+  }
+  
+  private func createTopSeparator() -> UIView {
+    let view = UIView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.addGestureRecognizer(self.panGestureRecognizer)
+    view.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.6)
+    
+    return view
+  }
+  
+  private func createPanGestureRecognizer() -> UIPanGestureRecognizer {
+    let gesture = UIPanGestureRecognizer()
+    gesture.addTarget(self, action: #selector(handlePanGestureRecognizer(_:)))
+    
+    return gesture
+  }
+  
+  private func createNoImagesLabel() -> UILabel {
+    let label = UILabel()
+    label.font = Configuration.noImagesFont
+    label.textColor = Configuration.noImagesColor
+    label.text = Configuration.noImagesTitle
+    label.alpha = 0
+    label.sizeToFit()
+    self.addSubview(label)
+    
+    return label
+  }
+  
   // MARK: - Initializers
 
   override init(frame: CGRect) {

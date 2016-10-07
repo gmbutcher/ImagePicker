@@ -13,12 +13,7 @@ class ImageStackView: UIView {
 
   weak var delegate: ImageStackViewDelegate?
 
-  lazy var activityView: UIActivityIndicatorView = {
-    let view = UIActivityIndicatorView()
-    view.alpha = 0.0
-
-    return view
-    }()
+  lazy var activityView: UIActivityIndicatorView = self.createActivityView()
 
   var views: [UIImageView] = {
     var array = [UIImageView]()
@@ -34,7 +29,16 @@ class ImageStackView: UIView {
     }
     return array
     }()
-
+  
+  // MARK: - Lazy compile time fix
+  
+  private func createActivityView() -> UIActivityIndicatorView {
+    let view = UIActivityIndicatorView()
+    view.alpha = 0.0
+    
+    return view
+  }
+  
   // MARK: - Initializers
 
   override init(frame: CGRect) {

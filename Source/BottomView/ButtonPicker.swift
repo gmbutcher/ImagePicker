@@ -13,16 +13,20 @@ class ButtonPicker: UIButton {
     static let buttonBorderSize: CGFloat = 68
   }
 
-  lazy var numberLabel: UILabel = { [unowned self] in
-    let label = UILabel()
-    label.translatesAutoresizingMaskIntoConstraints = false
-    label.font = Configuration.numberLabelFont
-
-    return label
-    }()
+  lazy var numberLabel: UILabel = self.createNumberLabel()
 
   weak var delegate: ButtonPickerDelegate?
 
+  // MARK: - Lazy compile time fix 
+  
+  private func createNumberLabel() -> UILabel {
+    let label = UILabel()
+    label.translatesAutoresizingMaskIntoConstraints = false
+    label.font = Configuration.numberLabelFont
+    
+    return label
+  }
+  
   // MARK: - Initializers
 
   override init(frame: CGRect) {

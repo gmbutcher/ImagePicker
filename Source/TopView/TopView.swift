@@ -17,7 +17,15 @@ class TopView: UIView {
   var currentFlashIndex = 0
   let flashButtonTitles = ["AUTO", "ON", "OFF"]
 
-  lazy var flashButton: UIButton = { [unowned self] in
+  lazy var flashButton: UIButton = self.createFlashButton()
+
+  lazy var rotateCamera: UIButton = self.createRotateCamera()
+
+  weak var delegate: TopViewDelegate?
+
+  // MARK: - Lazy compile time fix
+  
+  private func createFlashButton() -> UIButton {
     let button = UIButton()
     button.setImage(AssetManager.getImage("AUTO"), forState: .Normal)
     button.setTitle("AUTO", forState: .Normal)
@@ -27,23 +35,21 @@ class TopView: UIView {
     button.titleLabel?.font = Configuration.flashButton
     button.addTarget(self, action: #selector(flashButtonDidPress(_:)), forControlEvents: .TouchUpInside)
     button.contentHorizontalAlignment = .Left
-
+    
     return button
-    }()
-
-  lazy var rotateCamera: UIButton = { [unowned self] in
+  }
+  
+  private func createRotateCamera() -> UIButton {
     let button = UIButton()
     button.setImage(AssetManager.getImage("cameraIcon"), forState: .Normal)
     button.addTarget(self, action: #selector(rotateCameraButtonDidPress(_:)), forControlEvents: .TouchUpInside)
     button.imageView?.contentMode = .Center
-
+    
     return button
-    }()
-
-  weak var delegate: TopViewDelegate?
-
+  }
+  
   // MARK: - Initializers
-
+  
   override init(frame: CGRect) {
     super.init(frame: frame)
 

@@ -8,11 +8,15 @@ public class AssetManager {
     let traitCollection = UITraitCollection(displayScale: 3)
     var bundle = NSBundle(forClass: AssetManager.self)
 
-    if let bundlePath = bundle.resourcePath?.stringByAppendingString("/ImagePicker.bundle"), resourceBundle = NSBundle(path: bundlePath) {
+    if let bundlePath = bundle.resourcePath?.stringByAppendingString("/ImagePicker.bundle"),
+      resourceBundle = NSBundle(path: bundlePath) {
       bundle = resourceBundle
     }
 
-    return UIImage(named: name, inBundle: bundle, compatibleWithTraitCollection: traitCollection) ?? UIImage()
+    if let image = UIImage(named: name, inBundle: bundle, compatibleWithTraitCollection: traitCollection) {
+      return image
+    }
+    return UIImage()
   }
 
   public static func fetch(completion: (assets: [PHAsset]) -> Void) {
